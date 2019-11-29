@@ -1,0 +1,14 @@
+server.port: 8080
+
+spring:
+  application:
+    name: sc-gateway-server
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.0.0.21:8848
+        metadata:
+          VERSION: 1.0
+      config:
+        server-addr: 10.0.0.21:8848
+        file-extension: yml

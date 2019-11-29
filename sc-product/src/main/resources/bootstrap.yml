@@ -1,0 +1,16 @@
+server.port: 8845
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: sc-product
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 10.0.0.21:8848
+        metadata:
+          VERSION: 1.0
+      config:
+        server-addr: 10.0.0.21:8848
+        file-extension: yml
