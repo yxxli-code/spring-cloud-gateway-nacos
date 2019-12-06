@@ -1,4 +1,8 @@
-本项目基于Spring Cloud Greenwich.RELEASE, Spring Cloud Alibaba 2.1.0, Nacos 1.1.3.
+本项目基于Spring Cloud Greenwich.RELEASE, Spring Cloud Alibaba 2.1.0, Nacos 1.1.3, SEATA 0.9.0
+环境准备：
+  1. Nacos Server参见官网，这里10.0.0.21:8848
+  2. SEATA Server参见官网，这里10.0.0.22:8091
+  3. 带有InnoDB引擎的MySQL
 
 ## 一.使用Nacos实现动态路由
 
@@ -143,4 +147,75 @@ custom:
 curl -X GET \
   http://localhost:8080/v1/consumer/get/test-value \
   -H 'VERSION: 1.0' 
-```# spring-cloud-gateway-nacos
+```
+
+## 四.集成SEATA
+
+示例由官网示例演变而来，未尽事宜参见官网文档。
+
+### 4.1 创建数据库及表
+
+连接MySQL并执行sc-docs/db下面的SQL文件。
+注意：实际上，示例用例中的3个服务应该有3个数据库。但是，我们只需创建一个数据库并配置3个数据源即可。
+
+### 4.2 启动Seata Server
+
+准备：
+  1. 复制sc-account/src/main/resources/registry.conf, 覆盖conf/registry.conf
+  2. 修改 conf/nacos-config.txt配置
+
+删除
+```text
+service.vgroup_mapping.my_test_tx_group=default
+```  
+新增
+```text
+service.vgroup_mapping.sc-storage-fescar-service-group=default
+service.vgroup_mapping.sc-order-fescar-service-group=default
+service.vgroup_mapping.sc-business-fescar-service-group=default
+service.vgroup_mapping.sc-account-fescar-service-group=default
+```
+也可以在 Nacos 配置页面添加，data-id 为 service.vgroup_mapping.${YOUR_SERVICE_NAME}-fescar-service-group, group 为 SEATA_GROUP， 如果不添加该配置，启动后会提示no available server to connect
+注意配置文件末尾有空行，需要删除。
+
+  3. 同步配置数据到Nacos
+  
+```text
+cd conf
+sh nacos-config.sh 10.0.0.21
+```
+
+成功后命令行有提示
+```text
+init nacos config finished, please start seata-server
+```
+
+在Nacos管理页面应该可以看到有约47个Group为SEATA_GROUP的配置
+
+  4. 启动SEATA
+ 
+```text
+sh seata-server.sh -p 8091 -h 10.0.0.22 -m file &
+```
+启动后在 Nacos 的服务列表下面可以看到一个名为serverAddr的服务。
+
+### 4.3 运行示例
+
+运行sc-account, sc-business, sc-gateway-server, sc-order, sc-storage.
+注意：默认系统版本为1.0，测试需要时可以到Nacos动态配置实现灰度路由。
+
+### 4.4 测试
+
+正常执行完成的方法:
+```text
+curl -X GET \
+  http://localhost:8080/v1/business/purchase/commit \
+  -H 'VERSION: 2.0' 
+```
+
+会发生异常并正常回滚的方法:
+```text
+curl -X GET \
+  http://localhost:8080/v1/business/purchase/rollback \
+  -H 'VERSION: 2.0' 
+```

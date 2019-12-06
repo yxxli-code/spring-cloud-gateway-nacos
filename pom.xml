@@ -8,8 +8,17 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <name>cloud</name>
+    <name>sc-cloud</name>
     <description>Demo project for Spring Cloud</description>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.compiler.source>1.8</maven.compiler.source>
+        <maven.compiler.target>1.8</maven.compiler.target>
+        <java.version>1.8</java.version>
+    </properties>
+
 
     <modules>
         <module>sc-sidecar</module>
@@ -17,6 +26,10 @@
         <module>sc-gateway-server</module>
         <module>sc-consumer</module>
         <module>sc-product</module>
+        <module>sc-account</module>
+        <module>sc-storage</module>
+        <module>sc-order</module>
+        <module>sc-business</module>
     </modules>
 
     <dependencyManagement>
@@ -75,13 +88,6 @@
             <url>https://repo.spring.io/plugins-release/</url>
         </pluginRepository>
     </pluginRepositories>
-
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-    </properties>
 
     <dependencies>
         <!--自省和监控的集成功能-->

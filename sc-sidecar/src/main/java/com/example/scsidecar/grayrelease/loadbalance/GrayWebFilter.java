@@ -1,5 +1,6 @@
 package com.example.scsidecar.grayrelease.loadbalance;
 
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.server.reactive.ServerHttpRequest;
@@ -14,6 +15,7 @@ import reactor.core.publisher.Mono;
  */
 @Component
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
+@ConditionalOnClass(reactor.core.publisher.Mono.class)
 public class GrayWebFilter implements WebFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {

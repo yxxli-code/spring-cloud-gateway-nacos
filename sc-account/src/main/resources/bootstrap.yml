@@ -1,0 +1,19 @@
+server.port: 8083
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+  application:
+    name: sc-account
+  cloud:
+    alibaba:
+      seata:
+        tx-service-group: sc-account-fescar-service-group
+    nacos:
+      discovery:
+        server-addr: 10.0.0.21:8848
+        metadata:
+          VERSION: 1.0
+      config:
+        server-addr: 10.0.0.21:8848
+        file-extension: yml

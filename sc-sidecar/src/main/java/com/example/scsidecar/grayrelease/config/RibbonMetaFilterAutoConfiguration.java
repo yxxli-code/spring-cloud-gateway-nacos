@@ -2,8 +2,6 @@ package com.example.scsidecar.grayrelease.config;
 
 import com.example.scsidecar.grayrelease.loadbalance.GrayLoadBalancerInterceptor;
 import com.example.scsidecar.grayrelease.loadbalance.MetadataAwareRule;
-import com.example.scsidecar.grayrelease.loadbalance.RequestHolder;
-import feign.RequestInterceptor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigureBefore;
@@ -18,11 +16,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Scope;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * @author Create by Brian on 2019/11/18 19:55
@@ -50,25 +46,10 @@ public class RibbonMetaFilterAutoConfiguration {
     public RestTemplateCustomizer restTemplateCustomizer(LoadBalancerClient loadBalancerClient,
                                                          LoadBalancerRequestFactory requestFactory) {
         return restTemplate -> {
-            List<ClientHttpRequestInterceptor> list = new ArrayList<>();
+            List<ClientHttpRequestInterceptor> list = restTemplate.getInterceptors();
             list.add(ribbonInterceptor(loadBalancerClient, requestFactory));
             restTemplate.setInterceptors(list);
         };
     }
 
-    @Bean
-    RequestInterceptor requestTokenBearerInterceptor() {
-        return requestTemplate -> {
-            ServerHttpRequest request = RequestHolder.get();
-            Optional.ofNullable(request).ifPresent(serverHttpRequest -> {
-                Optional.ofNullable(serverHttpRequest.getHeaders()).ifPresent(
-                        (headers) -> {
-                            log.info("Accessing Version {}", headers.get("VERSION"));
-                            requestTemplate.header("VERSION", headers.get("VERSION"));
-                        }
-                );
-            });
-
-        };
-    }
 }

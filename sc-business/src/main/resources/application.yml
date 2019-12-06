@@ -1,0 +1,44 @@
+# 配置输出日志
+logging:
+  level:
+    org.springframework.cloud.gateway: TRACE
+    org.springframework.http.server.reactive: DEBUG
+    org.springframework.web.reactive: DEBUG
+    reactor.ipc.netty: DEBUG
+    io.seata: DEBUG
+    org.springframework.cloud.alibaba.seata.web: DEBUG
+
+#开启端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false
+
+custom:
+  test-value: local
+
+hystrix.command.default.execution.isolation.thread.timeoutInMilliseconds: 1200000
+hystrix:
+  shareSecurityContext: true
+  threadpool:
+    default:
+      coreSize: 200
+      maxQueueSize: 200
+      queueSizeRejectionThreshold: 50
+
+ribbon:
+  filter:
+    metadata:
+      enabled: true
+  ConnectTimeout: 300000
+  ReadTimeout: 300000
+feign:
+  hystrix:
+    enabled: true
+  okhttp:
+    enabled: true
+  httpclient:
+    enabled: false

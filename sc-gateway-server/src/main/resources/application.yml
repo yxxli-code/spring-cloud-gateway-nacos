@@ -24,7 +24,30 @@ spring:
             - Path=/v1/product/**
           filters:
             - StripPrefix=2
-
+        - id: sc-business
+          uri: lb://sc-business
+          predicates:
+            - Path=/v1/business/**
+          filters:
+            - StripPrefix=2
+        - id: sc-account
+          uri: lb://sc-account
+          predicates:
+            - Path=/v1/account/**
+          filters:
+            - StripPrefix=2
+        - id: sc-storage
+          uri: lb://sc-storage
+          predicates:
+            - Path=/v1/storage/**
+          filters:
+            - StripPrefix=2
+        - id: sc-order
+          uri: lb://sc-order
+          predicates:
+            - Path=/v1/order/**
+          filters:
+            - StripPrefix=2
 # 配置输出日志
 logging:
   level:
